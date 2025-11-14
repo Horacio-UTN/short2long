@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- Fondo rojo estilo YouTube -->
+  <rect width="128" height="128" rx="20" fill="#FF0000"/>
+
+  <!-- Símbolo de flecha circular (Short -> Long) -->
+  <g fill="#FFFFFF">
+    <!-- Flecha hacia la derecha -->
+    <path d="M 30 50 L 30 78 L 50 64 Z"/>
+
+    <!-- Línea corta -->
+    <rect x="52" y="58" width="15" height="12" rx="2"/>
+
+    <!-- Flecha de transformación -->
+    <path d="M 70 58 L 78 64 L 70 70 Z"/>
+
+    <!-- Línea larga -->
+    <rect x="80" y="58" width="25" height="12" rx="2"/>
+  </g>
+
+  <!-- Texto "S→L" -->
+  <text x="64" y="110" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#FFFFFF" text-anchor="middle">S→L</text>
+</svg>
