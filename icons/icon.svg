@@ -1,22 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
   <!-- Fondo rojo estilo YouTube -->
-  <rect width="128" height="128" rx="20" fill="#FF0000"/>
+  <rect width="128" height="128" rx="24" fill="#FF0000"/>
 
-  <!-- Símbolo de flecha circular (Short -> Long) -->
+  <!-- Representación visual: S → L -->
   <g fill="#FFFFFF">
-    <!-- Flecha hacia la derecha -->
-    <path d="M 30 50 L 30 78 L 50 64 Z"/>
-
-    <!-- Línea corta -->
-    <rect x="52" y="58" width="15" height="12" rx="2"/>
+    <!-- "S" - Barra corta -->
+    <rect x="20" y="54" width="30" height="20" rx="4"/>
 
     <!-- Flecha de transformación -->
-    <path d="M 70 58 L 78 64 L 70 70 Z"/>
+    <path d="M 58 64 L 70 64 M 65 58 L 70 64 L 65 70" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
 
-    <!-- Línea larga -->
-    <rect x="80" y="58" width="25" height="12" rx="2"/>
+    <!-- "L" - Barra larga -->
+    <rect x="78" y="54" width="50" height="20" rx="4"/>
   </g>
 
-  <!-- Texto "S→L" -->
-  <text x="64" y="110" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#FFFFFF" text-anchor="middle">S→L</text>
+  <!-- Icono de play de YouTube (pequeño) -->
+  <g>
+    <circle cx="64" cy="100" r="18" fill="#FFFFFF"/>
+    <path d="M 58 92 L 58 108 L 72 100 Z" fill="#FF0000"/>
+  </g>
 </svg>
