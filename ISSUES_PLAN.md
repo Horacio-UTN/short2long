@@ -1,79 +1,164 @@
-Propósito: Automatizar la tarea repetitiva de crear todas las issues de GitHub basadas en el archivo ISSUES_PLAN.md [cite: ISSUES_PLAN.md].
+# **Plan de Issues del Proyecto (Desde ROADMAP.md)**
 
-Herramienta: Un agente de UI (como Comet) que pueda leer un archivo de texto y operar en la interfaz web de GitHub.
+Este documento desglosa cada punto del ROADMAP.md en una plantilla de issue de GitHub. Cada issue incluye sus **dependencias** para establecer el orden de trabajo.
 
-Requisitos Previos:
+## **Milestone 1: Profesionalización y Marca**
 
-Debes estar logueado en GitHub.
+### **Tarea 1: Traducción (i18n)**
 
-El repositorio (https://github.com/Horacio-UTN/short2long/) ya debe estar creado.
+* **Título:** M1 (T2): Traducir (i18n) código y README al inglés  
+* **Cuerpo:** Profesionalizar el proyecto traduciendo todos los assets al inglés.  
+  1. Reemplazar README.md con la versión en inglés \[cite: previous\_response\].  
+  2. Traducir comentarios en background.js \[cite: horacio-utn/short2long/short2long-67eb6c5b92f4c13937b442c4a67d00ad034da312/background.js\].  
+  3. Traducir texto de notificaciones en background.js \[cite: horacio-utn/short2long/short2long-67eb6c5b92f4c13937b442c4a67d00ad034da312/background.js\].  
+* **Dependencies:** T1: Nuevo Repositorio  
+* **Labels:** milestone-1, documentation, good first issue
 
-El archivo ISSUES_PLAN.md [cite: ISSUES_PLAN.md] debe estar accesible para que el agente lo lea (ej. en esta conversación o en un editor de texto).
+## **Milestone 2: La Base de la Configuración**
 
-Guion de Ejecución para el Agente:
+### **Tarea 3: Permisos**
 
-Objetivo General: Para cada una de las 18 tareas listadas en ISSUES_PLAN.md [cite: ISSUES_PLAN.md], realiza el siguiente bucle de acciones:
+* **Título:** M2 (T3): Actualizar manifest.json con permisos "bookmarks" y "storage"  
+* **Cuerpo:** Modificar manifest.json \[cite: horacio-utn/short2long/short2long-67eb6c5b92f4c13937b442c4a67d00ad034da312/manifest.json\] para agregar "bookmarks" y "storage" a la lista de permissions.  
+* **Dependencies:** T1: Nuevo Repositorio  
+* **Labels:** milestone-2, config
 
-Bucle de Tarea (Repetir 18 veces):
+### **Tarea 4: Página de Opciones**
 
-Leer la Fuente:
+* **Título:** M2 (T4): Crear la UI de Opciones (options.html)  
+* **Cuerpo:** Crear el archivo options.html y registrarlo en manifest.json \[cite: horacio-utn/short2long/short2long-67eb6c5b92f4c13937b442c4a67d00ad034da312/manifest.json\] usando la clave "options\_page". El HTML debe ser un formulario básico por ahora.  
+* **Dependencies:** T1: Nuevo Repositorio  
+* **Labels:** milestone-2, feature, ui
 
-Navega al archivo ISSUES_PLAN.md [cite: ISSUES_PLAN.md].
+### **Tarea 5: Mapa de Intereses**
 
-Localiza la siguiente tarea que no se ha procesado (ej. "Tarea 1: Nuevo Repositorio").
+* **Título:** M2 (T5): Implementar lógica del "Mapa de Intereses" (options.js)  
+* **Cuerpo:**  
+  1. En options.html, agregar un \<textarea id="interest-map"\> y un \<button id="save-options"\>.  
+  2. Crear options.js (y enlazarlo a options.html).  
+  3. options.js debe guardar el contenido del textarea en chrome.storage.sync al hacer clic en el botón.  
+  4. options.js debe leer chrome.storage.sync al cargar para rellenar el textarea.  
+* **Dependencies:** T3: Permisos, T4: Página de Opciones  
+* **Labels:** milestone-2, feature, storage
 
-Copia el texto del campo Título: (ej. M1 (T1): Crear nuevo repositorio "Orcio"). Almacénalo como VAR_TITULO.
+## **Milestone 3: El Cerebro de Clasificación**
 
-Copia todo el texto del campo Cuerpo: (ej. Crear un nuevo repositorio... v1.0). Almacénalo como VAR_CUERPO.
+### **Tarea 6: El "Lector" (content.js)**
 
-Copia la lista de Labels: (ej. milestone-1, setup). Almacénalo como VAR_LABELS.
+* **Título:** M3 (T6): Crear el "Lector" (content.js) para leer título/descripción  
+* **Cuerpo:**  
+  1. Crear content.js.  
+  2. Registrarlo en manifest.json \[cite: horacio-utn/short2long/short2long-67eb6c5b92f4c13937b442c4a67d00ad034da312/manifest.json\] para youtube.com/\*.  
+  3. El script debe poder leer el título y la descripción de la página (ej. h1, \#description).  
+* **Dependencies:** T1: Nuevo Repositorio  
+* **Labels:** milestone-3, feature, content-script
 
-Navegar a GitHub:
+### **Tarea 7: Comunicación (Background \<-\> Content)**
 
-Abre una nueva pestaña del navegador.
+* **Título:** M3 (T7): Establecer comunicación entre background.js y content.js  
+* **Cuerpo:**  
+  1. En background.js \[cite: horacio-utn/short2long/short2long-67eb6c5b92f4c13937b442c4a67d00ad034da312/background.js\], modificar el onClicked para que envíe un mensaje (ej. getVideoDetails) a la pestaña activa.  
+  2. En content.js, añadir un listener (chrome.runtime.onMessage) que escuche ese mensaje y responda con {title: ..., description: ...}.  
+* **Dependencies:** T6: El "Lector" (content.js)  
+* **Labels:** milestone-3, refactor, core-logic
 
-Escribe la URL de la sección "Issues" de tu repositorio. (Ejemplo:https://github.com/Horacio-UTN/short2long/issues). Presiona Enter.
+### **Tarea 8: Lógica de Marcadores**
 
-Espera a que la página cargue.
+* **Título:** M3 (T8): Crear funciones de manejo de Marcadores en background.js  
+* **Cuerpo:** En background.js \[cite: horacio-utn/short2long/short2long-67eb6c5b92f4c13937b442c4a67d00ad034da312/background.js\], crear las funciones base findOrCreateBookmarkFolder(folderName, callback) y chrome.bookmarks.create (dentro de un wrapper).  
+* **Dependencies:** T3: Permisos  
+* **Labels:** milestone-3, feature, bookmarks
 
-Crear el Issue:
+### **Tarea 9: El "Emparejador" (Matcher)**
 
-Localiza y haz clic en el botón verde "New Issue".
+* **Título:** M3 (T9): Implementar el "Emparejador" (Matcher) de Heurísticas  
+* **Cuerpo:** Esta es la tarea de integración central.  
+  1. Modificar el callback del onClicked en background.js \[cite: horacio-utn/short2long/short2long-67eb6c5b92f4c13937b442c4a67d00ad034da312/background.js\].  
+  2. Leer el "Mapa de Intereses" desde chrome.storage.sync.  
+  3. Comparar el título (recibido del content.js) con los intereses.  
+  4. Si hay match, llamar a findOrCreateBookmarkFolder y chrome.bookmarks.create.  
+  5. Enviar notificación de éxito.  
+* **Dependencies:** T5: Mapa de Intereses, T7: Comunicación, T8: Lógica de Marcadores  
+* **Labels:** milestone-3, feature, core-logic
 
-Espera a que la página del formulario cargue.
+## **Milestone 4: Mejoras de UX**
 
-Localiza el campo de texto "Title".
+### **Tarea 10: Atajo de Teclado**
 
-Pega el contenido de VAR_TITULO en el campo "Title".
+* **Título:** M4 (T10): Agregar atajo de teclado configurable  
+* **Cuerpo:** Agregar la sección "commands" al manifest.json \[cite: horacio-utn/short2long/short2long-67eb6c5b92f4c13937b442c4a67d00ad034da312/manifest.json\] y definir una suggested\_key para \_execute\_action.  
+* **Dependencies:** T9: El "Emparejador" (Matcher) (El atajo debe *disparar* la lógica principal).  
+* **Labels:** milestone-4, feature, ux, good first issue
 
-Localiza el campo de texto del cuerpo (que dice "Leave a comment").
+### **Tarea 11: Botón en la Página**
 
-Pega el contenido de VAR_CUERPO en el campo del cuerpo.
+* **Título:** M4 (T11): Inyectar botón de guardado en la UI de YouTube  
+* **Cuerpo:**  
+  1. Modificar content.js para inyectar un \<button\> en la página (área de la derecha \[cite: image\_cf12a4.jpg\]).  
+  2. Estilizar el botón (quizás usar el icon.svg \[cite: horacio-utn/short2long/short2long-67eb6c5b92f4c13937b442c4a67d00ad034da312/icons/icon.svg\]).  
+  3. Hacer que el clic en este botón envíe un mensaje a background.js \[cite: horacio-utn/short2long/short2long-67eb6c5b92f4c13937b442c4a67d00ad034da312/background.js\] para disparar la lógica de guardado.  
+* **Dependencies:** T6: El "Lector" (content.js), T9: El "Emparejador" (Matcher)  
+* **Labels:** milestone-4, feature, ui
 
-Asignar Labels:
+### **Tarea 12: Estadísticas Locales**
 
-Localiza el ícono de engranaje (Configuración) junto a la sección "Labels" en la barra lateral derecha. Haz clic en él.
+* **Título:** M4 (T12): Implementar y mostrar estadísticas locales  
+* **Cuerpo:**  
+  1. En background.js \[cite: horacio-utn/short2long/short2long-67eb6c5b92f4c13937b442c4a67d00ad034da312/background.js\], al guardar un marcador, incrementar un contador en chrome.storage.local.  
+  2. En options.js, leer chrome.storage.local y mostrar las estadísticas en options.html.  
+* **Dependencies:** T5: Mapa de Intereses, T8: Lógica de Marcadores  
+* **Labels:** milestone-4, feature, storage, ux
 
-Aparecerá un cuadro de búsqueda de "Labels".
+## **Milestone 5: IA Opcional**
 
-Para cada etiqueta en VAR_LABELS (ej. milestone-1, setup):
+### **Tarea 13: UI de Opciones de IA**
 
-Escribe el nombre de la etiqueta en el cuadro de búsqueda (ej. milestone-1).
+* **Título:** M5 (T13): Agregar UI de IA (toggle y API key) en options.html  
+* **Cuerpo:**  
+  1. En options.html, agregar \<input type="checkbox" id="aiToggle"\>.  
+  2. Agregar \<input type="password" id="apiKey"\>.  
+  3. En options.js, guardar estos valores en chrome.storage.sync.  
+* **Dependencies:** T5: Mapa de Intereses  
+* **Labels:** milestone-5, feature, ui, config
 
-Haz clic en la etiqueta que aparece en la lista para seleccionarla.
+### **Tarea 14: Lógica de IA**
 
-(Si la etiqueta no existe, tendrás que crearla manualmente primero, pero para este guion asumimos que ya existen o que las escribirás y crearás sobre la marcha).
+* **Título:** M5 (T14): Implementar lógica de "Emparejador" IA en background.js  
+* **Cuerpo:**  
+  1. Modificar el "Emparejador" (T9).  
+  2. Al inicio, verificar chrome.storage.sync por el toggle de IA y la API key.  
+  3. **Si IA=true:** Construir un prompt para Gemini (con el título y el Mapa de Intereses) y usar fetch().  
+  4. Usar la respuesta de la IA para llamar a findOrCreateBookmarkFolder.  
+  5. **Si IA=false:** Usar la lógica de heurísticas existente (T9).  
+* **Dependencies:** T9: El "Emparejador" (Matcher), T13: UI de Opciones de IA  
+* **Labels:** milestone-5, feature, ia, core-logic
 
-Haz clic fuera del pop-up de "Labels" para cerrarlo.
+## **Milestone 6: Lanzamiento**
 
-Finalizar:
+### **Tarea 15: Cuenta de Desarrollador**
 
-Localiza y haz clic en el botón verde "Submit new issue".
+* **Título:** M6 (T15): Registrar cuenta de desarrollador de Chrome  
+* **Cuerpo:** Pagar los 5 USD en el dashboard de la Chrome Web Store.  
+* **Dependencies:** Ninguna (se puede hacer en cualquier momento).  
+* **Labels:** milestone-6, admin
 
-Espera a que la página del nuevo issue cargue (confirmando la creación).
+### **Tarea 16: Política de Privacidad**
 
-Cierra la pestaña del navegador.
+* **Título:** M6 (T16): Escribir y alojar una Política de Privacidad  
+* **Cuerpo:** Crear un archivo PRIVACY.md en el repositorio. Debe declarar que todos los datos (intereses, API key) se guardan localmente y no son recolectados por el desarrollador.  
+* **Dependencies:** T1: Nuevo Repositorio  
+* **Labels:** milestone-6, documentation
 
-Repetir:
+### **Tarea 17: Empaquetado**
 
-Vuelve al Paso 1 y procesa la siguiente tarea en ISSUES_PLAN.md [cite: ISSUES_PLAN.md] (ej. "Tarea 2: Traducción (i18n)") hasta terminar con la ultima y no queden mas issues.
+* **Título:** M6 (T17): Crear script o documentación para empaquetado  
+* **Cuerpo:** Crear el archivo .zip de producción, asegurándose de excluir archivos de desarrollo (.git, .gitignore \[cite: horacio-utn/short2long/short2long-67eb6c5b92f4c13937b442c4a67d00ad034da312/gitignore\], ROADMAP.md, ISSUES\_PLAN.md).  
+* **Dependencies:** (Al final de todos los Milestones de features)  
+* **Labels:** milestone-6, build
+
+### **Tarea 18: Publicación**
+
+* **Título:** M6 (T18): Redactar ficha de la tienda y publicar  
+* **Cuerpo:** Escribir la descripción, tomar capturas de pantalla y subir el .zip al Developer Dashboard para revisión.  
+* **Dependencies:** T15: Cuenta de Desarrollador, T16: Política de Privacidad, T17: Empaquetado  
+* **Labels:** milestone-6, admin
