@@ -99,6 +99,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const videoInfo = getVideoInfo();
     console.log('Video info collected:', videoInfo);
     sendResponse(videoInfo);
+  } else if (request.action === 'getVideoDetails') {
+    const title = getVideoTitle();
+    const description = getVideoDescription();
+    const videoDetails = {
+      title: title,
+      description: description
+    };
+    console.log('Video details collected:', videoDetails);
+    sendResponse(videoDetails);
   }
   return true; // Keep the message channel open for async response
 });
