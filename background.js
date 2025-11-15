@@ -6,6 +6,16 @@ chrome.action.onClicked.addListener((tab) => {
     return;
   }
 
+  // Send message to content script to get video details
+  chrome.tabs.sendMessage(tab.id, { action: 'getVideoDetails' }, (response) => {
+    if (chrome.runtime.lastError) {
+      console.error('Error communicating with content script:', chrome.runtime.lastError);
+    } else if (response) {
+      console.log('Video details received:', response);
+      // TODO: Process video details for classification (future milestone)
+    }
+  });
+
   // Try to convert YouTube Short URL to normal URL
   const convertedUrl = convertShortToWatch(tab.url);
 
