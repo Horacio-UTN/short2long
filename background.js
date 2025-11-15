@@ -12,7 +12,8 @@ chrome.action.onClicked.addListener((tab) => {
       console.error('Error communicating with content script:', chrome.runtime.lastError);
     } else if (response) {
       console.log('Video details received:', response);
-      // TODO: Process video details for classification (future milestone)
+      // Process video details using the heuristics matcher
+      processVideoWithMatcher(response, tab.url);
     }
   });
 
@@ -165,6 +166,143 @@ function saveBookmark(bookmarkDetails, callback) {
     } else {
       console.log('Bookmark saved successfully:', bookmark);
       if (callback) callback(bookmark);
+    }
+  });
+}
+
+/**
+ * Matches a video title against the user's interest map using heuristics
+ * @param {string} title - The video title to match
+ * @param {string} interestMap - The user's interest map (newline or comma-separated)
+ * @returns {string|null} - The matched interest or null if no match found
+ */
+function matchTitleWithInterests(title, interestMap) {
+  if (!title || !interestMap) {
+    return null;
+  }
+
+  // Parse the interest map - support both newline and comma-separated formats
+  const interests = interestMap
+    .split(/[\n,]/)
+    .map(interest => interest.trim())
+    .filter(interest => interest.length > 0);
+
+  if (interests.length === 0) {
+    return null;
+  }
+
+  // Convert title to lowercase for case-insensitive matching
+  const titleLower = title.toLowerCase();
+
+  // Find the first interest that matches (case-insensitive substring search)
+  for (const interest of interests) {
+    const interestLower = interest.toLowerCase();
+    if (titleLower.includes(interestLower)) {
+      console.log(`Match found: "${interest}" in title "${title}"`);
+      return interest;
+    }
+  }
+
+  console.log(`No match found for title: "${title}"`);
+  return null;
+}
+
+/**
+ * Processes video details using the heuristics matcher
+ * Reads the interest map, matches the title, and saves bookmark if match found
+ * @param {Object} videoDetails - Video details from content script
+ * @param {string} videoDetails.title - Video title
+ * @param {string} videoDetails.description - Video description
+ * @param {string} videoUrl - The URL of the video
+ */
+function processVideoWithMatcher(videoDetails, videoUrl) {
+  if (!videoDetails || !videoDetails.title) {
+    console.error('Invalid video details received');
+    chrome.notifications.create({
+      type: 'basic',
+      iconUrl: 'icons/icon48.png',
+      title: 'Short2Long',
+      message: 'Could not retrieve video title. Please try again.'
+    });
+    return;
+  }
+
+  // Read the Interest Map from chrome.storage.sync
+  chrome.storage.sync.get(['interestMap'], (result) => {
+    if (chrome.runtime.lastError) {
+      console.error('Error reading interest map:', chrome.runtime.lastError);
+      chrome.notifications.create({
+        type: 'basic',
+        iconUrl: 'icons/icon48.png',
+        title: 'Short2Long',
+        message: 'Error reading interest map. Please check your settings.'
+      });
+      return;
+    }
+
+    const interestMap = result.interestMap;
+
+    if (!interestMap || interestMap.trim().length === 0) {
+      console.log('Interest map is empty. Please configure your interests in the options page.');
+      chrome.notifications.create({
+        type: 'basic',
+        iconUrl: 'icons/icon48.png',
+        title: 'Short2Long',
+        message: 'No interests configured. Please add your interests in the extension options.'
+      });
+      return;
+    }
+
+    // Match the video title with interests
+    const matchedInterest = matchTitleWithInterests(videoDetails.title, interestMap);
+
+    if (matchedInterest) {
+      // Match found! Create/find bookmark folder and save the bookmark
+      findOrCreateBookmarkFolder(matchedInterest, (folder) => {
+        if (!folder) {
+          console.error('Failed to create or find bookmark folder');
+          chrome.notifications.create({
+            type: 'basic',
+            iconUrl: 'icons/icon48.png',
+            title: 'Short2Long',
+            message: 'Error creating bookmark folder. Please try again.'
+          });
+          return;
+        }
+
+        // Save the bookmark in the matched interest folder
+        saveBookmark({
+          title: videoDetails.title,
+          url: videoUrl,
+          parentId: folder.id
+        }, (bookmark) => {
+          if (bookmark) {
+            // Success! Send notification to the user
+            chrome.notifications.create({
+              type: 'basic',
+              iconUrl: 'icons/icon48.png',
+              title: 'Short2Long - Bookmark Saved!',
+              message: `Video saved to "${matchedInterest}" folder:\n${videoDetails.title}`
+            });
+          } else {
+            chrome.notifications.create({
+              type: 'basic',
+              iconUrl: 'icons/icon48.png',
+              title: 'Short2Long',
+              message: 'Error saving bookmark. Please try again.'
+            });
+          }
+        });
+      });
+    } else {
+      // No match found
+      console.log('No matching interest found for this video');
+      chrome.notifications.create({
+        type: 'basic',
+        iconUrl: 'icons/icon48.png',
+        title: 'Short2Long',
+        message: `No matching interest found for: "${videoDetails.title}"`
+      });
     }
   });
 }
