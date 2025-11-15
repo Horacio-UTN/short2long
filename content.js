@@ -300,3 +300,7 @@ chrome.runtime.sendMessage({
     console.log('Background script not listening (expected on initial load)');
   }
 });
+
+// ENHANCEMENT: Improved injectSaveButton() to support YouTube Shorts (#17)
+// Now detects page type (/watch vs /shorts) and uses appropriate CSS selectors
+// Shorts support: Updated to inject button in the right-side action bar
