@@ -1,0 +1,30 @@
+{
+  "extName": {
+    "message": "Short2Long - YouTube Shorts Converter",
+    "description": "Name of the extension"
+  },
+  "extDescription": {
+    "message": "Convert YouTube Shorts URLs to normal video URLs with a single click",
+    "description": "Description of the extension"
+  },
+  "extDefaultTitle": {
+    "message": "Convert YouTube Short to normal video",
+    "description": "Default title for the extension action"
+  },
+  "notificationTitle": {
+    "message": "Short2Long",
+    "description": "Title for notifications"
+  },
+  "notificationNotAShort": {
+    "message": "This page is not a YouTube Short",
+    "description": "Notification message when the current page is not a YouTube Short"
+  },
+  "actionTitleConvert": {
+    "message": "Convert to normal video",
+    "description": "Action title when on a Short page"
+  },
+  "actionTitleNotAShort": {
+    "message": "This page is not a YouTube Short",
+    "description": "Action title when not on a Short page"
+  }
+}

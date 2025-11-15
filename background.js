@@ -1,56 +1,56 @@
-// Listener para cuando se hace clic en el ícono de la extensión
+// Listener for when the extension icon is clicked
 chrome.action.onClicked.addListener((tab) => {
-  // Verificar que la pestaña actual tiene una URL
+  // Verify that the current tab has a URL
   if (!tab.url) {
-    console.error('No se pudo obtener la URL de la pestaña');
+    console.error('Could not get tab URL');
     return;
   }
 
-  // Intentar convertir la URL de YouTube Short a URL normal
+  // Try to convert YouTube Short URL to normal URL
   const convertedUrl = convertShortToWatch(tab.url);
 
-  // Si la URL fue convertida, redirigir a la nueva URL
+  // If the URL was converted, redirect to the new URL
   if (convertedUrl && convertedUrl !== tab.url) {
     chrome.tabs.update(tab.id, { url: convertedUrl });
-    console.log(`URL convertida: ${tab.url} -> ${convertedUrl}`);
+    console.log(`URL converted: ${tab.url} -> ${convertedUrl}`);
   } else {
-    console.log('La URL actual no es un YouTube Short o ya es una URL normal');
-    // Opcionalmente, puedes mostrar una notificación al usuario
+    console.log('Current URL is not a YouTube Short or already a normal URL');
+    // Optionally, show a notification to the user
     chrome.notifications.create({
       type: 'basic',
       iconUrl: 'icons/icon48.png',
-      title: 'Short2Long',
-      message: 'Esta página no es un YouTube Short'
+      title: chrome.i18n.getMessage('notificationTitle'),
+      message: chrome.i18n.getMessage('notificationNotAShort')
     });
   }
 });
 
 /**
- * Convierte una URL de YouTube Short a URL de watch normal
- * @param {string} url - La URL a convertir
- * @returns {string|null} - La URL convertida o null si no es un Short
+ * Converts a YouTube Short URL to a normal watch URL
+ * @param {string} url - The URL to convert
+ * @returns {string|null} - The converted URL or null if not a Short
  */
 function convertShortToWatch(url) {
   try {
     const urlObj = new URL(url);
 
-    // Verificar que es una URL de YouTube
+    // Verify that it's a YouTube URL
     if (!urlObj.hostname.includes('youtube.com')) {
       return null;
     }
 
-    // Verificar si es una URL de Short (formato: /shorts/VIDEO_ID)
+    // Check if it's a Short URL (format: /shorts/VIDEO_ID)
     const shortsPattern = /\/shorts\/([a-zA-Z0-9_-]+)/;
     const match = urlObj.pathname.match(shortsPattern);
 
     if (match && match[1]) {
-      // Extraer el ID del video
+      // Extract the video ID
       const videoId = match[1];
 
-      // Construir la URL de watch normal
+      // Build the normal watch URL
       const watchUrl = `https://www.youtube.com/watch?v=${videoId}`;
 
-      // Preservar cualquier parámetro adicional de la URL original
+      // Preserve any additional parameters from the original URL
       const searchParams = urlObj.searchParams;
       if (searchParams.toString()) {
         return `${watchUrl}&${searchParams.toString()}`;
@@ -61,26 +61,26 @@ function convertShortToWatch(url) {
 
     return null;
   } catch (error) {
-    console.error('Error al convertir la URL:', error);
+    console.error('Error converting URL:', error);
     return null;
   }
 }
 
-// Opcional: Listener para mostrar un estado diferente del ícono según la página
+// Optional: Listener to show a different icon state based on the page
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === 'complete' && tab.url) {
     const isShort = tab.url.includes('/shorts/');
 
-    // Cambiar el título del action según si es un Short o no
+    // Change the action title based on whether it's a Short or not
     if (isShort) {
       chrome.action.setTitle({
         tabId: tabId,
-        title: 'Convertir a video normal'
+        title: chrome.i18n.getMessage('actionTitleConvert')
       });
     } else {
       chrome.action.setTitle({
         tabId: tabId,
-        title: 'Esta página no es un YouTube Short'
+        title: chrome.i18n.getMessage('actionTitleNotAShort')
       });
     }
   }
