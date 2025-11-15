@@ -26,5 +26,9 @@
   "actionTitleNotAShort": {
     "message": "Esta página no es un YouTube Short",
     "description": "Action title when not on a Short page"
+  },
+  "cmdActivateExtension": {
+    "message": "Activar la extensión Short2Long",
+    "description": "Description for keyboard shortcut to activate the extension"
   }
 }
