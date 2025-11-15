@@ -306,3 +306,17 @@ function processVideoWithMatcher(videoDetails, videoUrl) {
     }
   });
 }
+
+// Listen for messages from content script (e.g., from the save button)
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === 'saveVideo') {
+    console.log('Save video request received from content script');
+
+    // Process the video with the matcher
+    processVideoWithMatcher(request.videoDetails, request.url);
+
+    // Send response back to content script
+    sendResponse({ success: true });
+    return true; // Keep the message channel open for async response
+  }
+});
