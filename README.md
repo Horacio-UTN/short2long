@@ -4,107 +4,122 @@
 ![Chrome](https://img.shields.io/badge/Chrome%20Extension-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 
-Esta es una extensión de Chrome simple diseñada para resolver un problema común en la versión de escritorio de YouTube: la interfaz de los Shorts.
+*[Read this in Spanish / Leer en español](README.es.md)*
 
-## El Problema
+A simple Chrome extension designed to solve a common problem on the desktop version of YouTube: the Shorts interface.
 
-Cuando navegas por YouTube Shorts en una PC, la interfaz oculta funciones clave como:
-* La sección de comentarios.
-* La opción de "Guardar en lista de reproducción" (o guardarlo en "Ver más tarde").
-* La descripción completa del video.
+## The Problem
 
-## La Solución
+When browsing YouTube Shorts on a PC, the interface hides key features such as:
+* The comments section.
+* The "Save to playlist" option (or save to "Watch later").
+* The full video description.
 
-Esta extensión detecta si estás en un video de YouTube Short (`youtube.com/shorts/...`) y añade un botón a la página (o se activa al hacer clic en el ícono de la extensión) que te redirige instantáneamente a la interfaz de video estándar (`youtube.com/watch?v=...`).
+## The Solution
 
-**¡Con un solo clic, recuperas los comentarios, la opción de guardar y la descripción!**
+This extension detects if you're on a YouTube Short video (`youtube.com/shorts/...`) and adds a button to the page (or activates when you click the extension icon) that instantly redirects you to the standard video interface (`youtube.com/watch?v=...`).
 
-## Cómo Usar
+**With a single click, you get back the comments, save option, and description!**
 
-1.  Navega a cualquier video de YouTube Short (por ejemplo: `https://www.youtube.com/shorts/VIDEO_ID`).
-2.  Haz clic en el ícono de la extensión en la barra de tu navegador.
-3.  La pestaña se recargará automáticamente con la URL de video estándar (por ejemplo: `https://www.youtube.com/watch?v=VIDEO_ID`).
+## How to Use
 
-## Estructura del Proyecto
+1. Navigate to any YouTube Short video (e.g., `https://www.youtube.com/shorts/VIDEO_ID`).
+2. Click the extension icon in your browser toolbar.
+3. The tab will automatically reload with the standard video URL (e.g., `https://www.youtube.com/watch?v=VIDEO_ID`).
+
+## Project Structure
 
 ```
 short2long/
-├── manifest.json       # Configuración de la extensión
-├── background.js       # Lógica principal de conversión
-├── icons/              # Iconos de la extensión
-│   ├── icon.svg       # Icono base en formato SVG
-│   ├── icon16.png     # Icono 16x16 (debe ser generado)
-│   ├── icon48.png     # Icono 48x48 (debe ser generado)
-│   └── icon128.png    # Icono 128x128 (debe ser generado)
+├── manifest.json       # Extension configuration
+├── background.js       # Main conversion logic
+├── _locales/           # i18n translation files
+│   ├── en/
+│   │   └── messages.json  # English translations
+│   └── es/
+│       └── messages.json  # Spanish translations
+├── icons/              # Extension icons
+│   ├── icon.svg       # Base icon in SVG format
+│   ├── icon16.png     # 16x16 icon (must be generated)
+│   ├── icon48.png     # 48x48 icon (must be generated)
+│   └── icon128.png    # 128x128 icon (must be generated)
 └── README.md
 ```
 
-## Instalación (Manual)
+## Installation (Manual)
 
-Como esta extensión no está (todavía) en la Chrome Web Store, puedes cargarla manualmente:
+Since this extension is not (yet) on the Chrome Web Store, you can load it manually:
 
-### 1. Preparar los iconos
+### 1. Prepare the Icons
 
-Los iconos PNG deben ser generados desde el archivo SVG incluido. Puedes hacerlo de varias formas:
+PNG icons must be generated from the included SVG file. You can do this in several ways:
 
-**Opción A: Usar un convertidor online**
-- Sube `icons/icon.svg` a https://cloudconvert.com/svg-to-png
-- Genera versiones de 16x16, 48x48 y 128x128 píxeles
-- Guárdalos en la carpeta `icons/` con los nombres correspondientes
+**Option A: Use an online converter**
+- Upload `icons/icon.svg` to https://cloudconvert.com/svg-to-png
+- Generate versions of 16x16, 48x48, and 128x128 pixels
+- Save them in the `icons/` folder with the corresponding names
 
-**Opción B: Usar ImageMagick (si lo tienes instalado)**
+**Option B: Use ImageMagick (if installed)**
 ```bash
 convert icons/icon.svg -resize 16x16 icons/icon16.png
 convert icons/icon.svg -resize 48x48 icons/icon48.png
 convert icons/icon.svg -resize 128x128 icons/icon128.png
 ```
 
-**Opción C: Usar tus propios iconos**
-- Simplemente coloca tus imágenes PNG en la carpeta `icons/` con los tamaños correctos
+**Option C: Use your own icons**
+- Simply place your PNG images in the `icons/` folder with the correct sizes
 
-### 2. Cargar la extensión en Chrome
+### 2. Load the Extension in Chrome
 
-1.  Clona o descarga este repositorio en tu computadora.
-2.  Asegúrate de tener los iconos PNG en la carpeta `icons/` (ver paso anterior).
-3.  Abre Google Chrome y ve a `chrome://extensions/`.
-4.  Activa el **"Modo desarrollador"** (usualmente un interruptor en la esquina superior derecha).
-5.  Haz clic en **"Cargar descomprimida"**.
-6.  Selecciona la carpeta donde descargaste (o clonaste) este proyecto.
-7.  ¡Listo! El ícono de la extensión debería aparecer en tu barra de herramientas.
+1. Clone or download this repository to your computer.
+2. Make sure you have the PNG icons in the `icons/` folder (see previous step).
+3. Open Google Chrome and go to `chrome://extensions/`.
+4. Enable **"Developer mode"** (usually a toggle in the top right corner).
+5. Click **"Load unpacked"**.
+6. Select the folder where you downloaded (or cloned) this project.
+7. Done! The extension icon should appear in your toolbar.
 
-## Características Técnicas
+## Technical Features
 
-- **Manifest V3**: Utiliza la última versión del manifiesto de Chrome
-- **Service Worker**: Background script optimizado para mejor rendimiento
-- **Notificaciones**: Feedback visual cuando la extensión se usa en páginas que no son Shorts
-- **Título dinámico**: El ícono de la extensión cambia su tooltip según el tipo de página
-- **Preservación de parámetros**: Mantiene cualquier parámetro adicional de la URL original
+- **Manifest V3**: Uses the latest version of Chrome's manifest
+- **Service Worker**: Optimized background script for better performance
+- **Notifications**: Visual feedback when the extension is used on non-Short pages
+- **Dynamic Title**: The extension icon changes its tooltip based on the page type
+- **Parameter Preservation**: Maintains any additional parameters from the original URL
+- **i18n Support**: Multilingual support (English and Spanish)
 
-## Cómo Funciona
+## How It Works
 
-La extensión:
+The extension:
 
-1. Escucha los clics en el ícono de la extensión (`chrome.action.onClicked`)
-2. Verifica si la URL actual es un YouTube Short (formato: `/shorts/VIDEO_ID`)
-3. Extrae el ID del video de la URL
-4. Construye la URL de watch estándar (`/watch?v=VIDEO_ID`)
-5. Redirige la pestaña actual a la nueva URL
+1. Listens for clicks on the extension icon (`chrome.action.onClicked`)
+2. Verifies if the current URL is a YouTube Short (format: `/shorts/VIDEO_ID`)
+3. Extracts the video ID from the URL
+4. Builds the standard watch URL (`/watch?v=VIDEO_ID`)
+5. Redirects the current tab to the new URL
 
-## Privacidad
+## Privacy
 
-Esta extensión:
-- ✅ NO recopila ningún dato
-- ✅ NO requiere acceso a tu historial de navegación
-- ✅ Solo funciona cuando haces clic en el ícono
-- ✅ Solo tiene permisos para youtube.com
+This extension:
+- ✅ Does NOT collect any data
+- ✅ Does NOT require access to your browsing history
+- ✅ Only works when you click the icon
+- ✅ Only has permissions for youtube.com
 
-## Contribuir
+## Supported Languages
 
-¡Las contribuciones son bienvenidas! Siéntete libre de:
-- Reportar bugs
-- Sugerir nuevas características
-- Enviar pull requests
+- 🇬🇧 English
+- 🇪🇸 Spanish
 
-## Licencia
+The extension automatically detects your browser's language and displays the appropriate content.
 
-Este proyecto es de código abierto y está disponible para uso libre.
+## Contributing
+
+Contributions are welcome! Feel free to:
+- Report bugs
+- Suggest new features
+- Submit pull requests
+
+## License
+
+This project is open source and available for free use.
