@@ -240,9 +240,15 @@ function handleSaveButtonClick() {
       setTimeout(() => {
         button.textContent = originalText;
       }, 2000);
-    } else {
-      console.log('Save request sent successfully');
+    } else if (response && response.success) { // ¡ÉXITO!
+      console.log('Save request successful:', response.message);
       button.textContent = '✅ Saved!';
+      setTimeout(() => {
+        button.textContent = originalText;
+      }, 2000);
+    } else { // ¡FALLO! (El background nos dijo por qué)
+      console.error('Save request failed:', response?.error || 'Unknown error');
+      button.textContent = '❌ Failed';
       setTimeout(() => {
         button.textContent = originalText;
       }, 2000);

@@ -214,16 +214,12 @@ function matchTitleWithInterests(title, interestMap) {
  * @param {string} videoDetails.title - Video title
  * @param {string} videoDetails.description - Video description
  * @param {string} videoUrl - The URL of the video
+ * @param {function} sendResponse - Callback function to send response back to content script
  */
-function processVideoWithMatcher(videoDetails, videoUrl) {
+function processVideoWithMatcher(videoDetails, videoUrl, sendResponse) {
   if (!videoDetails || !videoDetails.title) {
     console.error('Invalid video details received');
-    chrome.notifications.create({
-      type: 'basic',
-      iconUrl: 'icons/icon48.png',
-      title: 'Short2Long',
-      message: 'Could not retrieve video title. Please try again.'
-    });
+    sendResponse({ success: false, error: 'Invalid video details' });
     return;
   }
 
@@ -231,12 +227,7 @@ function processVideoWithMatcher(videoDetails, videoUrl) {
   chrome.storage.sync.get(['interestMap'], (result) => {
     if (chrome.runtime.lastError) {
       console.error('Error reading interest map:', chrome.runtime.lastError);
-      chrome.notifications.create({
-        type: 'basic',
-        iconUrl: 'icons/icon48.png',
-        title: 'Short2Long',
-        message: 'Error reading interest map. Please check your settings.'
-      });
+      sendResponse({ success: false, error: 'Error reading interest map' });
       return;
     }
 
@@ -244,12 +235,7 @@ function processVideoWithMatcher(videoDetails, videoUrl) {
 
     if (!interestMap || interestMap.trim().length === 0) {
       console.log('Interest map is empty. Please configure your interests in the options page.');
-      chrome.notifications.create({
-        type: 'basic',
-        iconUrl: 'icons/icon48.png',
-        title: 'Short2Long',
-        message: 'No interests configured. Please add your interests in the extension options.'
-      });
+      sendResponse({ success: false, error: 'Interest map is empty. Please configure your interests in the extension options.' });
       return;
     }
 
@@ -261,12 +247,7 @@ function processVideoWithMatcher(videoDetails, videoUrl) {
       findOrCreateBookmarkFolder(matchedInterest, (folder) => {
         if (!folder) {
           console.error('Failed to create or find bookmark folder');
-          chrome.notifications.create({
-            type: 'basic',
-            iconUrl: 'icons/icon48.png',
-            title: 'Short2Long',
-            message: 'Error creating bookmark folder. Please try again.'
-          });
+          sendResponse({ success: false, error: 'Failed to create bookmark folder' });
           return;
         }
 
@@ -277,32 +258,17 @@ function processVideoWithMatcher(videoDetails, videoUrl) {
           parentId: folder.id
         }, (bookmark) => {
           if (bookmark) {
-            // Success! Send notification to the user
-            chrome.notifications.create({
-              type: 'basic',
-              iconUrl: 'icons/icon48.png',
-              title: 'Short2Long - Bookmark Saved!',
-              message: `Video saved to "${matchedInterest}" folder:\n${videoDetails.title}`
-            });
+            // Success! Send response to content script
+            sendResponse({ success: true, message: `Video saved to "${matchedInterest}"` });
           } else {
-            chrome.notifications.create({
-              type: 'basic',
-              iconUrl: 'icons/icon48.png',
-              title: 'Short2Long',
-              message: 'Error saving bookmark. Please try again.'
-            });
+            sendResponse({ success: false, error: 'Error saving bookmark' });
           }
         });
       });
     } else {
       // No match found
       console.log('No matching interest found for this video');
-      chrome.notifications.create({
-        type: 'basic',
-        iconUrl: 'icons/icon48.png',
-        title: 'Short2Long',
-        message: `No matching interest found for: "${videoDetails.title}"`
-      });
+      sendResponse({ success: false, error: 'No matching interest found' });
     }
   });
 }
@@ -312,11 +278,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'saveVideo') {
     console.log('Save video request received from content script');
 
-    // Process the video with the matcher
-    processVideoWithMatcher(request.videoDetails, request.url);
+    // ¡ARREGLO! Pasamos `sendResponse` a la función asíncrona.
+    processVideoWithMatcher(request.videoDetails, request.url, sendResponse);
 
-    // Send response back to content script
-    sendResponse({ success: true });
-    return true; // Keep the message channel open for async response
+    return true; // ¡Ahora SÍ esperamos una respuesta asíncrona!
   }
+  return false; // Buena práctica
 });
